@@ -1,34 +1,39 @@
-🚗 LIMO Simulation – ROS Noetic (Ubuntu 20.04) Support
+# 🚗 LIMO Simulation – ROS Noetic (Ubuntu 20.04)
 
-Updated README for modern systems
+This README explains how to install, build, and run the **AgileX LIMO** robot simulation on **Ubuntu 20.04 + ROS Noetic + Gazebo 11**.
 
-This guide explains how to install, build, and run the AgileX LIMO Gazebo simulation on Ubuntu 20.04 with ROS Noetic.
-The original package was written for ROS Melodic, but it works on Noetic with minor adjustments.
+The original project was made for ROS Melodic, but it works on Noetic with small adjustments.
 
-📦 1. Package Overview
+---
+
+## 📁 1. Package Structure
+
 limo/
 ├── image
-├── limo_description      # URDF + meshes + xacro
-└── limo_gazebo_sim       # Gazebo world + controllers + launch files
+├── limo_description # URDF, meshes, xacro
+└── limo_gazebo_sim # Gazebo plugins, launch files
 
+yaml
+Copy code
 
-limo_description → robot model files
+---
 
-limo_gazebo_sim → Gazebo simulation + controllers
+## 🖥️ 2. Requirements
 
-🖥️ 2. System Requirements
-Component	Version
-OS	Ubuntu 20.04
-ROS	ROS Noetic
-Gazebo	Gazebo 11 (default on Noetic)
+| Component | Version |
+|----------|---------|
+| OS | Ubuntu 20.04 |
+| ROS | ROS Noetic |
+| Gazebo | Gazebo 11 |
 
-Make sure ROS Noetic Desktop-Full is installed:
+Install ROS Noetic Desktop-Full:  
 https://wiki.ros.org/noetic/Installation/Ubuntu
 
-📚 3. Required Dependencies (Noetic Versions)
+---
 
-Install ROS Noetic packages:
+## 📦 3. Install Dependencies (Noetic Versions)
 
+```bash
 sudo apt-get update
 
 sudo apt-get install ros-noetic-ros-control
@@ -38,85 +43,86 @@ sudo apt-get install ros-noetic-gazebo-ros-control
 
 sudo apt-get install ros-noetic-rqt-robot-steering
 sudo apt-get install ros-noetic-teleop-twist-keyboard
-
-🛠️ 4. Create Workspace and Build
-1) Create workspace
+🛠️ 4. Build the Workspace
+1) Create Workspace
+bash
+Copy code
 mkdir -p ~/limo_ws/src
 cd ~/limo_ws/src
-
-2) Clone the simulation package
+2) Clone LIMO Simulation Package
+bash
+Copy code
 git clone https://github.com/agilexrobotics/ugv_sim/limo.git
+Alternative if the repo is unavailable:
 
-
-If the repo gives an error, use the alternative:
-git clone https://github.com/agilexrobotics/limo_cobot_sim
-
-3) Install missing dependencies
+bash
+Copy code
+git clone https://github.com/agilexrobotics/limo_cobot_sim.git
+3) Install Missing Dependencies
+bash
+Copy code
 cd ~/limo_ws
 rosdep install --from-paths src --ignore-src -r -y
-
 4) Build
+bash
+Copy code
 catkin_make
-
-5) Source workspace
+5) Source Workspace
+bash
+Copy code
 source devel/setup.bash
+(Optional: Add to .bashrc)
 
-
-(Optional: add to .bashrc)
-
+bash
+Copy code
 echo "source ~/limo_ws/devel/setup.bash" >> ~/.bashrc
-
-🚀 5. Visualize LIMO Model in RViz
+🚀 5. View LIMO Model in RViz
+bash
+Copy code
 roslaunch limo_description display_models.launch
+🏎️ 6. Run Simulation in Gazebo
+Always source the workspace:
 
-
-This opens RViz and loads the URDF model.
-
-🏎️ 6. Run the Gazebo Simulation
-
-Source workspace first:
-
+bash
+Copy code
 source ~/limo_ws/devel/setup.bash
-
-✔️ Ackermann Steering Mode
+Ackermann Steering
+bash
+Copy code
 roslaunch limo_gazebo_sim limo_ackerman.launch
-
-✔️ Four-Wheel Differential Mode
+Four-Wheel Differential Mode
+bash
+Copy code
 roslaunch limo_gazebo_sim limo_four_diff.launch
-
 🎮 7. Control the Robot
-📌 Using RQT Steering GUI
+RQT Steering GUI
+bash
+Copy code
 rosrun rqt_robot_steering rqt_robot_steering
-
-📌 Using Keyboard Teleop
+Keyboard Control
+bash
+Copy code
 rosrun teleop_twist_keyboard teleop_twist_keyboard.py
+Control keys:
 
+css
+Copy code
+i → forward
+j → left
+l → right
+, → backward
+📝 Notes for ROS Noetic Users
+If Python scripts fail, change shebang from:
 
-Use keys:
+shell
+Copy code
+#!/usr/bin/env python
+to:
 
-i   → forward
-j   → left
-l   → right
-,   → backward
-
-📝 Notes for Noetic Users
-
-All Python scripts must use Python 3
-If any script starts with #!/usr/bin/env python, change it to:
-
+shell
+Copy code
 #!/usr/bin/env python3
+Gazebo 11 may warn about deprecated tags — usually safe.
 
+Ensure all Noetic packages above are installed.
 
-Gazebo 11 is more strict; if you see warnings about deprecated tags, they are safe to ignore.
-
-If plugins fail to load, make sure ros-noetic-gazebo-ros-control is installed.
-
-✔️ 8. Everything Working?
-
-If you want, I can generate:
-
-✅ a Noetic-compatible fork
-✅ fixed launch files
-✅ a patched version of the simulation
-
-Just tell me the errors you get.
